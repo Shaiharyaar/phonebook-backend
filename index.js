@@ -83,6 +83,33 @@ app.post('/api/persons', (request, response) => {
   response.json(person)
 })
 
+app.put('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  const body = request.body
+
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: 'Name or number is missing',
+    })
+  } else {
+    const index = persons.findIndex((person) => person.id === id)
+
+    if (index !== -1) {
+      const updatedPerson = {
+        id,
+        name: body.name,
+        number: body.number,
+      }
+
+      persons[index] = { ...persons[index], ...updatedPerson }
+
+      response.json(updatedPerson)
+    } else {
+      response.status(400).send({ error: 'malformatted id' })
+    }
+  }
+})
+
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   const person = persons.find((person) => person.id === id)
